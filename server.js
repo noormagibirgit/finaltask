@@ -7,8 +7,9 @@ const app = express();
 app.use(bodyParser.json());
 
 
-app.use('/', );
 
-app.listen(, () => {
+app.use('/todo', todoRouter);
+
+app.listen(3000, () => {
     console.log('Server is running on Port 3000.');
 });
