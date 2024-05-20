@@ -2,10 +2,19 @@ const express = require('express');
 const db = require('../db');
 const router = express.Router();
 
+db.connect((error) => {
+    if(error) {
+        console.log('connection failed');
+    }else {
+        console.log('connection initiated')
+    }
+});
+
+
 router.get('/', async (req, res) => {
 
     try {
-        const data = db.query('SELECT * FROM todo;');
+        const data = await db.query('SELECT * FROM todo;');
         res.status(200).json({todo: data.rows});
     }
     catch(error) {
@@ -32,13 +41,13 @@ router.post('/', async (req, res) => {
 
 router.delete('/', async (req, res) => {
     const {task} = req.body;
-    const data = await db.query("SELECT * FROM todo WHERE id = $1;", [task]);
+    const data = await db.query("SELECT * FROM todo WHERE task = $1;", [task]);
 
     if(data.rows.length === 0) {
         res.status(200).json({message: "there no such task"});
     } else {
         try {
-            const result = await db.query("DELETE FROM todo WHERE id = $1;", [task]);
+            const result = await db.query("DELETE FROM todo WHERE task = $1;", [task]);
             res.status(200).json({message: `${result.rowCount} row was deleted.`});
         }
         catch(error) {
